@@ -354,17 +354,6 @@ with tab1:
                                         placeholder=T("placeholder_price", lang),
                                         step=1.0, key=f"prod_price_{v}")
 
-    # 強化版：排除項目（預設「無」，可修改）
-    _excl_default = st.session_state.db_meta.get("exclusions", "無") or "無"
-    _excl_value = st.text_area(
-        T("db_exclusions", lang),
-        value=_excl_default,
-        height=68,
-        key=f"exclusions_{v}",
-        help="填寫本次盤查中排除的項目與理由（例：辦公室消耗、非重要副產品）"
-    )
-    st.session_state.db_meta["exclusions"] = _excl_value
-
     st.divider()
     st.subheader(T("raw_header", lang))
     st.caption(T("raw_note", lang))

@@ -180,7 +180,7 @@ TRANSLATIONS = {
                         "en": "Data Quality Reliability"},
     "db_q_comp":       {"zh": "數據品質等級完整性",
                         "en": "Data Quality Completeness"},
-    "db_exclusions":   {"zh": "排除項目",
+    "db_exclusions":   {"zh": "Exclusions",
                         "en": "Exclusions"},
     "db_product_price":{"zh": "產品單價（自動帶入）",
                         "en": "Product Unit Price (auto)"},
