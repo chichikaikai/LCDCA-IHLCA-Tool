@@ -1,0 +1,196 @@
+"""
+語言翻譯字典
+用法：from utils.i18n import T, get_lang
+"""
+
+TRANSLATIONS = {
+    # ── 全局 ──────────────────────────────────────
+    "app_title":        {"zh": "🌿 IHLCA 計算工具（Integrated Hybrid LCA）",
+                         "en": "🌿 IHLCA Calculator (Integrated Hybrid LCA)"},
+    "app_title_demo":   {"zh": "🌿 IHLCA 計算工具 (Demo)",
+                         "en": "🌿 IHLCA Calculator (Demo)"},
+    "app_caption":      {"zh": "工程材料碳足跡 — 只算 Integrated（需有 T 製程資料）",
+                         "en": "Construction material carbon footprint — Integrated only (T process data required)"},
+    "app_caption_full": {"zh": "工程材料碳足跡 — 只算 Integrated（需有 T 製程資料）",
+                         "en": "Construction material carbon footprint — Integrated only (T process data required)"},
+    "no_T_err":         {"zh": "本工具只算 Integrated — 請至少輸入一筆「原物料投入 T」（數量 > 0）",
+                         "en": "This tool only computes Integrated — please enter at least one material with quantity > 0"},
+
+    # ── 側邊欄（強化版簡化）────────────────────────
+    "sidebar_header":          {"zh": "Bᴀ 碳強度向量",
+                                "en": "Bᴀ Carbon Intensity Vector"},
+    "sidebar_status_A_only":   {"zh": "✓ 內建 A 矩陣已自動載入（台灣 110 年，163 部門）",
+                                "en": "✓ Built-in A matrix loaded (Taiwan 2021, 163 sectors)"},
+    "sidebar_status_need_BA":  {"zh": "⚠ 尚未上傳 Bᴀ — 請先下載範本填值後上傳，才能進行計算",
+                                "en": "⚠ Bᴀ not uploaded yet — download the template, fill it, and upload before calculation"},
+    "sidebar_status_BA_ready": {"zh": "✓ Bᴀ 已就緒，可進入「輸入投入&產出資訊」分頁",
+                                "en": "✓ Bᴀ is ready — proceed to the Input tab"},
+    "sidebar_BA_section":      {"zh": "上傳 Bᴀ（必填）",
+                                "en": "Upload Bᴀ (required)"},
+    "sidebar_BA_cap":          {"zh": "內建 A 矩陣：台灣 110 年 IO 表（163 部門）。本工具不內含 Bᴀ，每次使用時請組員從 NAS 取最新版上傳。",
+                                "en": "Built-in A matrix: Taiwan 2021 IO Table (163 sectors). Bᴀ is not embedded; upload from NAS for each use."},
+    "sidebar_dl_BA":           {"zh": "⬇️ 下載 Bᴀ 填報範本",
+                                "en": "⬇️ Download Bᴀ Template"},
+    "sidebar_upload_BA_label": {"zh": "上傳填妥的 Bᴀ Excel（直欄格式）",
+                                "en": "Upload completed Bᴀ Excel (vertical layout)"},
+    "sidebar_BA_upload_ok":    {"zh": "✓ Bᴀ 已更新（{n} 個部門）",
+                                "en": "✓ Bᴀ updated ({n} sectors)"},
+    "sidebar_BA_upload_fail":  {"zh": "Bᴀ 上傳失敗：{e}",
+                                "en": "Bᴀ upload failed: {e}"},
+    "sidebar_BA_size_warn":    {"zh": "⚠ Bᴀ 長度 {n_new} 與內建 A 矩陣 {n_base} 不符，未更新",
+                                "en": "⚠ Bᴀ length {n_new} != built-in A size {n_base}, not updated"},
+
+    # ── Tab 標題 ──────────────────────────────────
+    "tab_input":   {"zh": "📋 輸入投入&產出資訊", "en": "📋 Input & Output Info"},
+    "tab_result":  {"zh": "📊 計算結果",           "en": "📊 Results"},
+    "tab_detail":  {"zh": "🔍 明細",               "en": "🔍 Details"},
+    "tab_db":      {"zh": "📦 產出 DB Excel",      "en": "📦 Generate DB Excel"},
+    "no_BA_err":   {"zh": "請先在側欄上傳 Bᴀ，才能執行計算",
+                    "en": "Please upload Bᴀ in the sidebar before calculating"},
+
+    # ── 匯入區塊 ──────────────────────────────────
+    "import_expander":  {"zh": "📂 匯入投入產出 Excel",          "en": "📂 Import Input/Output Excel"},
+    "import_dl_btn":    {"zh": "⬇️ 下載投入產出範本",            "en": "⬇️ Download Template"},
+    "import_upload":    {"zh": "上傳填妥的 Excel",               "en": "Upload completed Excel"},
+    "import_success":   {"zh": "讀取到：產品 {p} 項，原物料 {r} 項，能資源 {e} 項", "en": "Read: {p} product, {r} raw materials, {e} energy inputs"},
+    "import_apply":     {"zh": "套用",                           "en": "Apply"},
+    "import_fail":      {"zh": "匯入失敗：{e}",                  "en": "Import failed: {e}"},
+
+    # ── 產品資訊 ──────────────────────────────────
+    "prod_header":      {"zh": "產品資訊",                        "en": "Product Information"},
+    "prod_note":        {"zh": "📌 本系統用於分析 **1 單位產品** 的碳足跡，數量請填 1，單位請填宣告單位（如 M³、kg、件）。",
+                         "en": "📌 This system analyzes the carbon footprint of **1 unit of product**. Set quantity to 1 and enter the declared unit (e.g. M³, kg, pc)."},
+    "prod_name":        {"zh": "產品名稱",     "en": "Product Name"},
+    "prod_sector":      {"zh": "對應 IO 部門", "en": "IO Sector"},
+    "prod_unit":        {"zh": "單位",         "en": "Unit"},
+    "prod_qty":         {"zh": "數量",         "en": "Quantity"},
+    "prod_price":       {"zh": "單價 ($NTD/單位)", "en": "Unit Price ($NTD/unit)"},
+    "prod_qty_warn":    {"zh": "數量請填 1，本系統僅分析 1 單位產品的碳足跡", "en": "Please set quantity to 1. This system only analyzes 1 unit."},
+    "prod_default":     {"zh": "建設工程",     "en": "Construction Work"},
+
+    # ── 材料表格 ──────────────────────────────────
+    "raw_header":       {"zh": "原物料投入",   "en": "Raw Material Inputs"},
+    "raw_note":         {"zh": "📌 請填入生產 **1 單位產品** 所需的各項原物料投入量。", "en": "📌 Enter the raw material inputs required to produce **1 unit of product**."},
+    "energy_header":    {"zh": "能資源投入",   "en": "Energy & Resource Inputs"},
+    "energy_note":      {"zh": "📌 請填入生產 **1 單位產品** 所需的各項能源及資源投入量。", "en": "📌 Enter the energy and resource inputs required to produce **1 unit of product**."},
+    "col_name":         {"zh": "名稱",         "en": "Name"},
+    "col_sector":       {"zh": "對應 IO 部門", "en": "IO Sector"},
+    "col_unit":         {"zh": "單位",         "en": "Unit"},
+    "col_qty":          {"zh": "數量",         "en": "Quantity"},
+    "col_price":        {"zh": "單價 ($NTD/單位)", "en": "Unit Price ($NTD/unit)"},
+    "col_delete":       {"zh": "刪除",         "en": "Del"},
+    "btn_add":          {"zh": "＋ 新增",      "en": "＋ Add"},
+    "btn_clear":        {"zh": "清除全部",     "en": "Clear All"},
+    "placeholder_unit": {"zh": "單位",         "en": "Unit"},
+    "placeholder_qty":  {"zh": "數量",         "en": "Qty"},
+    "placeholder_price":{"zh": "單價",         "en": "Price"},
+
+    # ── Bpb 區塊 ──────────────────────────────────
+    "bpb_btn":     {"zh": "📊 產生 Bᴛ 矩陣",       "en": "📊 Generate Bᴛ Matrix"},
+    "bpb_header":  {"zh": "Bᴛ 矩陣確認",           "en": "Bᴛ Matrix Review"},
+    "bpb_caption": {"zh": "請確認或修改各製程的碳強度（Bᴛ），確認後按「開始計算碳足跡」。",
+                    "en": "Review or modify the carbon intensity (Bᴛ) for each process, then click Calculate."},
+    "bpb_col_name":{"zh": "名稱",                  "en": "Name"},
+    "calc_btn":    {"zh": "🚀 開始計算碳足跡",      "en": "🚀 Calculate Carbon Footprint"},
+    "calc_ok":     {"zh": "✓ 計算完成！請切換至「計算結果」分頁", "en": "✓ Done! Switch to the Results tab."},
+    "calc_fail":   {"zh": "計算錯誤：{e}",          "en": "Calculation error: {e}"},
+    "no_io":       {"zh": "請先在左側載入 IO 資料庫", "en": "Please load IO database first."},
+    "no_mat":      {"zh": "請至少輸入一項有效材料",   "en": "Please enter at least one valid material."},
+
+    # ── 計算結果 ──────────────────────────────────
+    "res_no_calc": {"zh": "尚未計算，請至「輸入投入&產出資訊」分頁完成設定", "en": "No results yet. Please complete the input tab first."},
+    "res_prod_name":    {"zh": "產品名稱",   "en": "Product Name"},
+    "res_unit":         {"zh": "宣告單位",   "en": "Declared Unit"},
+    "res_qty":          {"zh": "數量",       "en": "Quantity"},
+    "res_boundary":     {"zh": "評估邊界",   "en": "System Boundary"},
+    "res_boundary_val": {"zh": "搖籃到大門", "en": "Cradle to Gate"},
+    "res_total":        {"zh": "總碳排放量", "en": "Total Emissions"},
+    "res_pblca":        {"zh": "PBLCA",      "en": "PBLCA"},
+    "res_iolca":        {"zh": "IOLCA",      "en": "IOLCA"},
+    "res_scope_title":  {"zh": "Scope 1 / 2 / 3 總覽", "en": "Scope 1 / 2 / 3 Summary"},
+    "res_scope_col":    {"zh": "Scope",      "en": "Scope"},
+    "res_desc_col":     {"zh": "說明",       "en": "Description"},
+    "res_em_col":       {"zh": "碳排放量 (kg CO₂e)", "en": "Emissions (kg CO₂e)"},
+    "scope1_desc":      {"zh": "產品製造的直接排放",         "en": "Direct emissions from product manufacturing"},
+    "scope2_desc":      {"zh": "產品製造的間接排放（電力）", "en": "Indirect emissions from electricity use"},
+    "scope3_desc":      {"zh": "產品製造的其他上游間接排放", "en": "Other upstream indirect emissions"},
+    "lca_title":        {"zh": "生命週期階段分析",  "en": "Life Cycle Stage Analysis"},
+    "lca_stage_col":    {"zh": "生命週期階段",      "en": "Life Cycle Stage"},
+    "lca_raw":          {"zh": "原物料生產",        "en": "Raw Material Production"},
+    "lca_transport":    {"zh": "原物料運輸",        "en": "Raw Material Transport"},
+    "lca_manufacture":  {"zh": "製造",             "en": "Manufacturing"},
+    "hotspot_title":    {"zh": "碳排放熱點",        "en": "Carbon Emission Hotspots"},
+
+    # ── 明細 ──────────────────────────────────────
+    "detail_no_calc":   {"zh": "尚未計算",         "en": "No results yet."},
+    "detail_filter":    {"zh": "類別篩選",          "en": "Filter by Category"},
+    "detail_sort":      {"zh": "排序",             "en": "Sort"},
+    "detail_sort_orig": {"zh": "原始順序",          "en": "Original Order"},
+    "detail_sort_desc": {"zh": "碳排放量大→小",    "en": "Emissions High→Low"},
+    "cat_raw":          {"zh": "原物料投入",        "en": "Raw Materials"},
+    "cat_energy":       {"zh": "能資源投入",        "en": "Energy Inputs"},
+    "cat_product":      {"zh": "產品",             "en": "Product"},
+    "cat_io":           {"zh": "IO 部門",           "en": "IO Sectors"},
+    "detail_count":     {"zh": "共 {n} 筆，非零 {nz} 筆", "en": "{n} rows, {nz} non-zero"},
+
+    # ── 強化版：NAS 共用資料夾載入 ────────────────────
+    "sidebar_nas":          {"zh": "③ 從 NAS 共用資料夾載入",
+                             "en": "③ Load from NAS Shared Folder"},
+    "sidebar_nas_cap":      {"zh": "讀取資料夾內的 tw110_io.npz / sectors.json 或 IO 範本 Excel",
+                             "en": "Reads tw110_io.npz / sectors.json or IO template Excel in folder"},
+    "sidebar_nas_path":     {"zh": "資料夾路徑（NAS／共用資料）",
+                             "en": "Folder path (NAS shared data)"},
+    "sidebar_nas_load_btn": {"zh": "從資料夾載入",         "en": "Load from Folder"},
+    "sidebar_nas_load_ok":  {"zh": "✓ NAS 載入完成（{n} 部門，來源：{src}）",
+                             "en": "✓ NAS loaded ({n} sectors, source: {src})"},
+    "sidebar_nas_load_fail":{"zh": "NAS 載入失敗：{e}",   "en": "NAS load failed: {e}"},
+    "sidebar_nas_not_found":{"zh": "資料夾不存在或找不到 IO 資料檔",
+                             "en": "Folder not found or no IO data file"},
+
+    # ── 強化版：資料品質 Pedigree ─────────────────────
+    "quality_header":      {"zh": "資料品質評分（Pedigree Matrix）",
+                            "en": "Data Quality Scores (Pedigree Matrix)"},
+    "quality_caption":     {"zh": "對每筆材料的「活動數據」與「排放係數」依 5 維度評分（1 最佳、5 最差）",
+                            "en": "Score each material on 5 dimensions for activity data and emission factor (1=best, 5=worst)"},
+    "quality_expander":    {"zh": "🔍 編輯資料品質評分",   "en": "🔍 Edit Quality Scores"},
+    "quality_act_section": {"zh": "活動數據等級",        "en": "Activity Data"},
+    "quality_em_section":  {"zh": "排放係數等級",        "en": "Emission Factor"},
+    "quality_col_material":{"zh": "材料",                "en": "Material"},
+
+    # ── 強化版：DB 上傳格式輸出 ───────────────────────
+    "db_section":      {"zh": "🌐 產生 DB 上傳格式 Excel", "en": "🌐 Generate DB Upload Excel"},
+    "db_caption":      {"zh": "依 products-import-template 格式輸出 6 分頁 Excel，可直接上傳網站資料庫",
+                        "en": "Output 6-sheet Excel in products-import-template format for DB upload"},
+    "db_pcces":        {"zh": "PCCES 編碼",   "en": "PCCES Code"},
+    "db_prod_en":      {"zh": "產品英文名稱", "en": "Product English Name"},
+    "db_location":     {"zh": "製造地點",     "en": "Manufacturing Location"},
+    "db_boundary":     {"zh": "系統邊界",     "en": "System Boundary"},
+    "db_period":       {"zh": "盤查起訖日",   "en": "Inventory Period"},
+    "db_process":      {"zh": "製程描述",     "en": "Process Description"},
+    "db_method":       {"zh": "LCA 方法學",   "en": "LCA Methodology"},
+    "db_act_src":      {"zh": "活動數據來源", "en": "Activity Data Source"},
+    "db_em_src":       {"zh": "排放係數來源", "en": "Emission Factor Source"},
+    "db_gwp":          {"zh": "GWP 方法",     "en": "GWP Method"},
+    "db_org":          {"zh": "建置單位",     "en": "Organization"},
+    "db_audit":        {"zh": "查驗證說明",   "en": "Audit Note"},
+    "db_version":      {"zh": "版次",         "en": "Version"},
+    "db_calc_method":  {"zh": "計算方法",     "en": "Calculation Method"},
+    "db_q_reli":       {"zh": "數據品質等級可靠性",
+                        "en": "Data Quality Reliability"},
+    "db_q_comp":       {"zh": "數據品質等級完整性",
+                        "en": "Data Quality Completeness"},
+    "db_btn":          {"zh": "📦 產生 DB 上傳 Excel",  "en": "📦 Generate DB Excel"},
+    "db_dl":           {"zh": "⬇️ 下載 DB 上傳 Excel",  "en": "⬇️ Download DB Excel"},
+    "db_ok":           {"zh": "✓ Excel 已產生，係數編號：{cid}",
+                        "en": "✓ Excel ready, coefficient ID: {cid}"},
+    "db_fail":         {"zh": "產生失敗：{e}", "en": "Generation failed: {e}"},
+    "db_meta_header":  {"zh": "後設資料（DB 上傳必填）",   "en": "Metadata (required for DB upload)"},
+}
+
+
+def T(key: str, lang: str, **kwargs) -> str:
+    """取得翻譯文字，支援 {變數} 替換"""
+    text = TRANSLATIONS.get(key, {}).get(lang, key)
+    if kwargs:
+        text = text.format(**kwargs)
+    return text
