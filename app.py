@@ -89,13 +89,27 @@ if "quality_energy_rows" not in st.session_state:
 if "db_meta" not in st.session_state:
     st.session_state.db_meta = {
         "pcces": "", "product_en": "", "location": "台灣",
-        "boundary": "搖籃到大門", "period": "2021/01/01~2021/12/31",
-        "process_desc": "", "lca_method": "複合生命週期評估",
+        "boundary": "搖籃到大門",
+        "exclusions": "無",   # 排除項目（新增；預設「無」）
+        "period": "2021/01/01~2021/12/31",
+        "process_desc": "",
+        # LCA 方法學 — 預設完整 ISO 說明
+        "lca_method": (
+            "本係數依據 ISO 14067:2018 第 6.3.4 條完整性要求，"
+            "採用 Integrated Hybrid LCA 建置。"
+            "前景系統以製程 LCA 資料建模，"
+            "背景系統以臺灣產業關聯表補足截止門檻外之間接排放；"
+            "對於前景製程投入資料不可得之產品，前景系統邊界收斂至功能單位層級，"
+            "係數完整由背景 IO 矩陣估算，"
+            "仍符合 Hybrid LCA 之系統邊界完整性要求。"
+        ),
         "activity_src": "財政部製造業原物料耗用通常水準調查報告、主計總處110年產業關聯統計",
         "emission_src": "能源署110年能源平衡表、環境部溫室氣體排放係數管理表、環境部2023年國家溫室氣體排放清冊",
         "gwp": "IPCC AR6", "org": "LCDCA低碳數位營建聯盟",
         "audit_note": "此係數之建置方法學預計於 2026 年完成第三方之 AUP 查證。",
-        "version": "V1.0", "calc_method": "Integrated",
+        "version": "V1.0",
+        # 固定為 "IH"（Integrated Hybrid）；不再讓使用者選
+        "calc_method": "IH",
         "up_src": "工程會公共工程價格資料庫",
         "quality_reli": 2,   # 數據品質等級可靠性（預設 2）
         "quality_comp": 2,   # 數據品質等級完整性（預設 2）
@@ -339,6 +353,17 @@ with tab1:
                                         value=default_prod_price,
                                         placeholder=T("placeholder_price", lang),
                                         step=1.0, key=f"prod_price_{v}")
+
+    # 強化版：排除項目（預設「無」，可修改）
+    _excl_default = st.session_state.db_meta.get("exclusions", "無") or "無"
+    _excl_value = st.text_area(
+        T("db_exclusions", lang),
+        value=_excl_default,
+        height=68,
+        key=f"exclusions_{v}",
+        help="填寫本次盤查中排除的項目與理由（例：辦公室消耗、非重要副產品）"
+    )
+    st.session_state.db_meta["exclusions"] = _excl_value
 
     st.divider()
     st.subheader(T("raw_header", lang))
@@ -590,27 +615,31 @@ with tab4:
         st.caption(T("db_caption", lang))
 
         meta = st.session_state.db_meta
+        # 從 Tab 1 抓「產品單價」自動帶入
+        prod_price_display = st.session_state.get(
+            f"prod_price_{st.session_state.widget_version}", 0.0
+        ) or 0.0
+
         with st.expander(T("db_meta_header", lang), expanded=True):
             m_col1, m_col2 = st.columns(2)
             with m_col1:
                 meta["pcces"]      = st.text_input(T("db_pcces", lang),    value=meta["pcces"],     key="meta_pcces")
-                meta["calc_method"]= st.selectbox(T("db_calc_method", lang),
-                                                  ["IO", "Integrated"],
-                                                  index=0 if meta["calc_method"] == "IO" else 1,
-                                                  key="meta_calc_method")
                 meta["version"]    = st.text_input(T("db_version", lang),  value=meta["version"],   key="meta_version")
                 meta["product_en"] = st.text_input(T("db_prod_en", lang),  value=meta["product_en"],key="meta_product_en")
                 meta["location"]   = st.text_input(T("db_location", lang), value=meta["location"],  key="meta_location")
                 meta["boundary"]   = st.text_input(T("db_boundary", lang), value=meta["boundary"],  key="meta_boundary")
                 meta["period"]     = st.text_input(T("db_period", lang),   value=meta["period"],    key="meta_period")
+                # 產品單價（自動帶入、可覆寫）
+                st.text_input(T("db_product_price", lang),
+                              value=f"{float(prod_price_display):g}",
+                              key="meta_product_price_display", disabled=True)
             with m_col2:
                 meta["gwp"]         = st.text_input(T("db_gwp", lang),    value=meta["gwp"],         key="meta_gwp")
                 meta["org"]         = st.text_input(T("db_org", lang),    value=meta["org"],         key="meta_org")
-                meta["lca_method"]  = st.text_input(T("db_method", lang), value=meta["lca_method"],  key="meta_lca_method")
                 meta["activity_src"]= st.text_area(T("db_act_src", lang), value=meta["activity_src"],height=70, key="meta_activity_src")
                 meta["emission_src"]= st.text_area(T("db_em_src", lang),  value=meta["emission_src"],height=70, key="meta_emission_src")
                 meta["audit_note"]  = st.text_area(T("db_audit", lang),   value=meta["audit_note"],  height=70, key="meta_audit_note")
-            # 數據品質等級（可靠性、完整性）— 新增，預設 2
+            # 數據品質等級（可靠性、完整性）
             q_col1, q_col2 = st.columns(2)
             with q_col1:
                 meta["quality_reli"] = st.number_input(T("db_q_reli", lang),
@@ -622,14 +651,25 @@ with tab4:
                                                        min_value=1, max_value=5, step=1,
                                                        value=int(meta.get("quality_comp", 2) or 2),
                                                        key="meta_quality_comp")
+            # LCA 方法學 — 統合含計算方法的完整說明
+            meta["lca_method"]   = st.text_area(T("db_method", lang),   value=meta["lca_method"],   height=140, key="meta_lca_method")
+            # 製程描述
             meta["process_desc"] = st.text_area(T("db_process", lang), value=meta["process_desc"], key="meta_process_desc")
+            # 排除項目 — Tab 1 已填、此處可再次修改（兩處同步）
+            meta["exclusions"]   = st.text_area(T("db_exclusions", lang),
+                                                value=meta.get("exclusions", "無") or "無",
+                                                height=70, key="meta_exclusions",
+                                                help="Tab 1 已填；如需微調可在此修改，儲存後產出的 DB Excel 會用最新值")
             st.session_state.db_meta = meta
+            # 內部固定為 IH（不再讓使用者選 IO/Integrated）
+            meta["calc_method"] = "IH"
 
         if st.button(T("db_btn", lang), type="primary", use_container_width=True, key="db_export_btn"):
             try:
                 from utils.db_exporter import export_db_format, build_coefficient_id
                 meta_payload = dict(meta)
                 meta_payload["unit"] = prod_unit_display
+                meta_payload["product_price"] = float(prod_price_display or 0)
                 qs = (st.session_state.get("quality_raw_rows", []) +
                       st.session_state.get("quality_energy_rows", []))
                 buf = export_db_format(

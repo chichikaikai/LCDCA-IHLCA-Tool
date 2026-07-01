@@ -10,34 +10,36 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-# ── Sheet 1: products-import-template 的 26 個欄位 ──
+# ── Sheet 1: products-import-template 的 28 個欄位 ──
 PRODUCTS_HEADERS = [
     "PCCES編碼",            # 1
     "產品名稱",              # 2
     "產品英文名稱",          # 3
     "數量",                  # 4
     "宣告單位",              # 5
-    "碳足跡數值",            # 6 ← 計算結果
-    "製造地點",              # 7
-    "系統邊界",              # 8
-    "盤查起訖日",            # 9
-    "製程描述",              # 10
-    "LCA方法學",             # 11
-    "活動數據來源",          # 12
-    "排放係數來源",          # 13
-    "數據品質等級可靠性",    # 14
-    "數據品質等級完整性",    # 15
-    "GWP方法",               # 16
-    "建置單位",              # 17
-    "查驗證說明",            # 18
-    "建立資料時間",          # 19
-    "更新資料時間",          # 20
-    "版次",                  # 21
-    "原物料投入T",           # 22
-    "原物料單價",            # 23
-    "原物料排放係數B",       # 24
-    "數據品質",              # 25
-    "碳足跡熱點",            # 26
+    "產品單價",              # 6 ← 新增（自動帶入 Tab 1 值）
+    "碳足跡數值",            # 7 ← 計算結果
+    "製造地點",              # 8
+    "系統邊界",              # 9
+    "排除項目",              # 10 ← 新增
+    "盤查起訖日",            # 11
+    "製程描述",              # 12
+    "LCA方法學",             # 13
+    "活動數據來源",          # 14
+    "排放係數來源",          # 15
+    "數據品質等級可靠性",    # 16
+    "數據品質等級完整性",    # 17
+    "GWP方法",               # 18
+    "建置單位",              # 19
+    "查驗證說明",            # 20
+    "建立資料時間",          # 21
+    "更新資料時間",          # 22
+    "版次",                  # 23 ← 輸出加「IH-」前綴
+    "原物料投入T",           # 24
+    "原物料單價",            # 25
+    "原物料排放係數B",       # 26
+    "數據品質",              # 27
+    "碳足跡熱點",            # 28
 ]
 
 
@@ -105,33 +107,39 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
     today = datetime.now().strftime("%Y-%m-%d")
     cf_value = round(float(result.total_emission), 6)
 
+    # 版次自動加 IH- 前綴（Integrated Hybrid）
+    ver_raw = (metadata.get("version", "V1.0") or "V1.0").strip()
+    ver_out = ver_raw if ver_raw.startswith("IH-") else f"IH-{ver_raw}"
+
     row1_vals = [
         metadata.get("pcces", ""),                                       # 1
         result.product_name,                                              # 2
         metadata.get("product_en", ""),                                   # 3
         1,                                                                # 4 數量
         metadata.get("unit", ""),                                         # 5
-        cf_value,                                                         # 6 碳足跡數值
-        metadata.get("location", "台灣"),                                  # 7
-        metadata.get("boundary", "搖籃到大門"),                            # 8
-        metadata.get("period", ""),                                       # 9
-        metadata.get("process_desc", ""),                                 # 10
-        metadata.get("lca_method", "複合生命週期評估"),                    # 11
-        metadata.get("activity_src", ""),                                 # 12
-        metadata.get("emission_src", ""),                                 # 13
-        avg_re,                                                           # 14
-        avg_co,                                                           # 15
-        metadata.get("gwp", "IPCC AR6"),                                  # 16
-        metadata.get("org", ""),                                          # 17
-        metadata.get("audit_note", ""),                                   # 18
-        today,                                                            # 19
-        today,                                                            # 20
-        metadata.get("version", "V1.0"),                                  # 21
-        "(見『原物料投入 T』分頁)",                                         # 22
-        "(見『原物料單價Cu』分頁)",                                         # 23
-        "(見『原物料排放係數B』分頁)",                                      # 24
-        "(見『數據品質』分頁)",                                              # 25
-        "(見『碳足跡熱點』分頁)",                                            # 26
+        float(metadata.get("product_price", 0) or 0),                     # 6 產品單價（新增）
+        cf_value,                                                         # 7 碳足跡數值
+        metadata.get("location", "台灣"),                                  # 8
+        metadata.get("boundary", "搖籃到大門"),                            # 9
+        metadata.get("exclusions", "無"),                                  # 10 排除項目（新增）
+        metadata.get("period", ""),                                       # 11
+        metadata.get("process_desc", ""),                                 # 12
+        metadata.get("lca_method", ""),                                   # 13
+        metadata.get("activity_src", ""),                                 # 14
+        metadata.get("emission_src", ""),                                 # 15
+        avg_re,                                                           # 16
+        avg_co,                                                           # 17
+        metadata.get("gwp", "IPCC AR6"),                                  # 18
+        metadata.get("org", ""),                                          # 19
+        metadata.get("audit_note", ""),                                   # 20
+        today,                                                            # 21
+        today,                                                            # 22
+        ver_out,                                                          # 23 版次 IH-V1.0
+        "(見『原物料投入 T』分頁)",                                         # 24
+        "(見『原物料單價Cu』分頁)",                                         # 25
+        "(見『原物料排放係數B』分頁)",                                      # 26
+        "(見『數據品質』分頁)",                                              # 27
+        "(見『碳足跡熱點』分頁)",                                            # 28
     ]
     for c, v in enumerate(row1_vals, start=1):
         cell = ws1.cell(2, c, v)
@@ -291,10 +299,10 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
 
 def build_coefficient_id(pcces: str, method: str, version: str) -> str:
     """
-    產出完整係數編號：PCCES-方法-版次
-    例：M1658121006-IO-V2.0
+    產出完整係數編號：PCCES-IH-版次
+    方法欄固定為 IH（Integrated Hybrid），不受 method 參數影響
+    例：M0337718003-IH-V1.0
     """
     pcces = (pcces or "").strip() or "UNKNOWN"
-    method = (method or "IO").strip()
     version = (version or "V1.0").strip()
-    return f"{pcces}-{method}-{version}"
+    return f"{pcces}-IH-{version}"
