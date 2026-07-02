@@ -113,7 +113,6 @@ if "db_meta" not in st.session_state:
         "up_src": "工程會公共工程價格資料庫",
         "quality_reli": 2,   # 數據品質等級可靠性（預設 2）
         "quality_comp": 2,   # 數據品質等級完整性（預設 2）
-        "notes": "",         # 備註（新增）
     }
 
 with st.sidebar:
@@ -650,11 +649,6 @@ with tab4:
                                                 value=meta.get("exclusions", "無") or "無",
                                                 height=70, key="meta_exclusions",
                                                 help="盤查中排除的項目與理由（例：辦公室消耗、非重要副產品）")
-            # 備註（新增）
-            meta["notes"]        = st.text_area(T("db_notes", lang),
-                                                value=meta.get("notes", "") or "",
-                                                height=70, key="meta_notes",
-                                                help="其他補充資訊，選填")
             st.session_state.db_meta = meta
             # 內部固定為 IH（不再讓使用者選 IO/Integrated）
             meta["calc_method"] = "IH"

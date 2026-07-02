@@ -10,7 +10,7 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-# ── Sheet 1: products-import-template 的 29 個欄位（依使用者指定順序）──
+# ── Sheet 1: products-import-template 的 28 個欄位（依使用者指定順序）──
 PRODUCTS_HEADERS = [
     "PCCES編碼",            # 1
     "產品名稱",              # 2
@@ -34,13 +34,12 @@ PRODUCTS_HEADERS = [
     "建立資料時間",          # 20
     "更新資料時間",          # 21
     "版次",                  # 22 ← 輸出加「IH-」前綴
-    "備註",                  # 23 ← 新增
-    "產品單價",              # 24 ← 移到後方
-    "原物料投入",            # 25 ← 原名 T 拿掉
-    "原物料單價",            # 26
-    "原物料排放係數",        # 27 ← 原名 B 拿掉
-    "數據品質",              # 28
-    "碳足跡熱點",            # 29
+    "產品單價",              # 23 ← 移到後方
+    "原物料投入",            # 24 ← 原名 T 拿掉
+    "原物料單價",            # 25
+    "原物料排放係數",        # 26 ← 原名 B 拿掉
+    "數據品質",              # 27
+    "碳足跡熱點",            # 28
 ]
 
 
@@ -135,13 +134,12 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
         today,                                                            # 20 建立資料時間
         today,                                                            # 21 更新資料時間
         ver_out,                                                          # 22 版次 IH-V1.0
-        metadata.get("notes", ""),                                        # 23 備註（新增）
-        float(metadata.get("product_price", 0) or 0),                     # 24 產品單價（移到後方）
-        "(見『原物料投入 T』分頁)",                                         # 25 原物料投入
-        "(見『原物料單價Cu』分頁)",                                         # 26 原物料單價
-        "(見『原物料排放係數B』分頁)",                                      # 27 原物料排放係數
-        "(見『數據品質』分頁)",                                              # 28 數據品質
-        "(見『碳足跡熱點』分頁)",                                            # 29 碳足跡熱點
+        float(metadata.get("product_price", 0) or 0),                     # 23 產品單價
+        "(見『原物料投入 T』分頁)",                                         # 24 原物料投入
+        "(見『原物料單價Cu』分頁)",                                         # 25 原物料單價
+        "(見『原物料排放係數B』分頁)",                                      # 26 原物料排放係數
+        "(見『數據品質』分頁)",                                              # 27 數據品質
+        "(見『碳足跡熱點』分頁)",                                            # 28 碳足跡熱點
     ]
     for c, v in enumerate(row1_vals, start=1):
         cell = ws1.cell(2, c, v)
