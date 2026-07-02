@@ -10,36 +10,37 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
-# ── Sheet 1: products-import-template 的 28 個欄位 ──
+# ── Sheet 1: products-import-template 的 29 個欄位（依使用者指定順序）──
 PRODUCTS_HEADERS = [
     "PCCES編碼",            # 1
     "產品名稱",              # 2
     "產品英文名稱",          # 3
     "數量",                  # 4
     "宣告單位",              # 5
-    "產品單價",              # 6 ← 新增（自動帶入 Tab 1 值）
-    "碳足跡數值",            # 7 ← 計算結果
-    "製造地點",              # 8
-    "系統邊界",              # 9
-    "Exclusions",            # 10 ← 新增（英文）
-    "盤查起訖日",            # 11
-    "製程描述",              # 12
-    "LCA方法學",             # 13
-    "活動數據來源",          # 14
-    "排放係數來源",          # 15
-    "數據品質等級可靠性",    # 16
-    "數據品質等級完整性",    # 17
-    "GWP方法",               # 18
-    "建置單位",              # 19
-    "查驗證說明",            # 20
-    "建立資料時間",          # 21
-    "更新資料時間",          # 22
-    "版次",                  # 23 ← 輸出加「IH-」前綴
-    "原物料投入T",           # 24
-    "原物料單價",            # 25
-    "原物料排放係數B",       # 26
-    "數據品質",              # 27
-    "碳足跡熱點",            # 28
+    "碳足跡數值",            # 6 ← 計算結果
+    "製造地點",              # 7
+    "系統邊界",              # 8
+    "盤查起訖日",            # 9
+    "製程描述",              # 10
+    "排除項目",              # 11
+    "LCA方法學",             # 12
+    "活動數據來源",          # 13
+    "排放係數來源",          # 14
+    "數據品質等級可靠性",    # 15
+    "數據品質等級完整性",    # 16
+    "GWP方法",               # 17
+    "建置單位",              # 18
+    "查驗證說明",            # 19
+    "建立資料時間",          # 20
+    "更新資料時間",          # 21
+    "版次",                  # 22 ← 輸出加「IH-」前綴
+    "備註",                  # 23 ← 新增
+    "產品單價",              # 24 ← 移到後方
+    "原物料投入",            # 25 ← 原名 T 拿掉
+    "原物料單價",            # 26
+    "原物料排放係數",        # 27 ← 原名 B 拿掉
+    "數據品質",              # 28
+    "碳足跡熱點",            # 29
 ]
 
 
@@ -112,34 +113,35 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
     ver_out = ver_raw if ver_raw.startswith("IH-") else f"IH-{ver_raw}"
 
     row1_vals = [
-        metadata.get("pcces", ""),                                       # 1
-        result.product_name,                                              # 2
-        metadata.get("product_en", ""),                                   # 3
-        1,                                                                # 4 數量
-        metadata.get("unit", ""),                                         # 5
-        float(metadata.get("product_price", 0) or 0),                     # 6 產品單價（新增）
-        cf_value,                                                         # 7 碳足跡數值
-        metadata.get("location", "台灣"),                                  # 8
-        metadata.get("boundary", "搖籃到大門"),                            # 9
-        metadata.get("exclusions", "無"),                                  # 10 排除項目（新增）
-        metadata.get("period", ""),                                       # 11
-        metadata.get("process_desc", ""),                                 # 12
-        metadata.get("lca_method", ""),                                   # 13
-        metadata.get("activity_src", ""),                                 # 14
-        metadata.get("emission_src", ""),                                 # 15
-        avg_re,                                                           # 16
-        avg_co,                                                           # 17
-        metadata.get("gwp", "IPCC AR6"),                                  # 18
-        metadata.get("org", ""),                                          # 19
-        metadata.get("audit_note", ""),                                   # 20
-        today,                                                            # 21
-        today,                                                            # 22
-        ver_out,                                                          # 23 版次 IH-V1.0
-        "(見『原物料投入 T』分頁)",                                         # 24
-        "(見『原物料單價Cu』分頁)",                                         # 25
-        "(見『原物料排放係數B』分頁)",                                      # 26
-        "(見『數據品質』分頁)",                                              # 27
-        "(見『碳足跡熱點』分頁)",                                            # 28
+        metadata.get("pcces", ""),                                        # 1  PCCES編碼
+        result.product_name,                                              # 2  產品名稱
+        metadata.get("product_en", ""),                                   # 3  產品英文名稱
+        1,                                                                # 4  數量
+        metadata.get("unit", ""),                                         # 5  宣告單位
+        cf_value,                                                         # 6  碳足跡數值
+        metadata.get("location", "台灣"),                                  # 7  製造地點
+        metadata.get("boundary", "搖籃到大門"),                            # 8  系統邊界
+        metadata.get("period", ""),                                       # 9  盤查起訖日
+        metadata.get("process_desc", ""),                                 # 10 製程描述
+        metadata.get("exclusions", "無"),                                  # 11 排除項目
+        metadata.get("lca_method", ""),                                   # 12 LCA方法學
+        metadata.get("activity_src", ""),                                 # 13 活動數據來源
+        metadata.get("emission_src", ""),                                 # 14 排放係數來源
+        avg_re,                                                           # 15 可靠性
+        avg_co,                                                           # 16 完整性
+        metadata.get("gwp", "IPCC AR6"),                                  # 17 GWP方法
+        metadata.get("org", ""),                                          # 18 建置單位
+        metadata.get("audit_note", ""),                                   # 19 查驗證說明
+        today,                                                            # 20 建立資料時間
+        today,                                                            # 21 更新資料時間
+        ver_out,                                                          # 22 版次 IH-V1.0
+        metadata.get("notes", ""),                                        # 23 備註（新增）
+        float(metadata.get("product_price", 0) or 0),                     # 24 產品單價（移到後方）
+        "(見『原物料投入 T』分頁)",                                         # 25 原物料投入
+        "(見『原物料單價Cu』分頁)",                                         # 26 原物料單價
+        "(見『原物料排放係數B』分頁)",                                      # 27 原物料排放係數
+        "(見『數據品質』分頁)",                                              # 28 數據品質
+        "(見『碳足跡熱點』分頁)",                                            # 29 碳足跡熱點
     ]
     for c, v in enumerate(row1_vals, start=1):
         cell = ws1.cell(2, c, v)
