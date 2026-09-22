@@ -208,7 +208,7 @@ class HybridLCACalculator:
 
         logger.info("計算完成。總碳排=%.4f", float(np.sum(material_emissions)) + product_emission + float(np.sum(sector_emissions)))
 
-        return LCAResult(
+        res = LCAResult(
             material_names=[m.name for m in materials],
             material_emissions=material_emissions,
             product_name=product.name,
@@ -216,6 +216,9 @@ class HybridLCACalculator:
             sector_names=self.sector_names,
             sector_emissions=sector_emissions,
         )
+        # 保存計算實際使用的 Bᴛ（製程碳強度），供 DB 匯出『原物料排放係數B』使用
+        res.bpb = np.array(Bpb, dtype=float)
+        return res
 
     def calculate_with_custom_bpb(
         self, materials: list, product: Product, custom_Bpb: np.ndarray
@@ -253,7 +256,7 @@ class HybridLCACalculator:
         logger.info("自訂Bpb計算完成。總碳排=%.4f",
                     float(np.sum(material_emissions)) + product_emission + float(np.sum(sector_emissions)))
 
-        return LCAResult(
+        res = LCAResult(
             material_names=[m.name for m in materials],
             material_emissions=material_emissions,
             product_name=product.name,
@@ -261,3 +264,6 @@ class HybridLCACalculator:
             sector_names=self.sector_names,
             sector_emissions=sector_emissions,
         )
+        # 保存計算實際使用的 Bᴛ（製程碳強度），供 DB 匯出『原物料排放係數B』使用
+        res.bpb = np.array(custom_Bpb, dtype=float)
+        return res

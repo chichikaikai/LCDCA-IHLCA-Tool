@@ -193,6 +193,14 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
     for c, h in enumerate(headers4, start=1):
         _style_header(ws4.cell(1, c, h))
         ws4.column_dimensions[ws4.cell(1, c).column_letter].width = 22
+    # 計算時實際使用的 Bᴛ（= 單價 × 部門碳強度 B_IO，或使用者於『Bᴛ 矩陣確認』手動修改後的值）
+    # 依材料名稱對應；result.bpb 順序為 [材料1..n, 產品]
+    bt_map = {}
+    bpb_used = getattr(result, "bpb", None)
+    if bpb_used is not None:
+        for nm, v in zip(result.material_names, list(bpb_used)[:len(result.material_names)]):
+            bt_map[nm] = float(v)
+
     r_idx = 2
     for r in raw_rows + energy_rows:
         if not r.get("name"):
@@ -205,9 +213,14 @@ def export_db_format(result, metadata, raw_rows, energy_rows,
         else:
             bio = 0.0
             sec_name = ""
+        if r["name"] in bt_map:
+            bt = bt_map[r["name"]]
+        else:
+            # 後備：與 Bᴛ 矩陣相同公式（單價 × B_IO）
+            bt = float(r.get("price") or 0) * bio
         ws4.cell(r_idx, 1, r["name"])
         ws4.cell(r_idx, 2, r.get("unit", ""))
-        ws4.cell(r_idx, 3, round(bio, 8))
+        ws4.cell(r_idx, 3, round(bt, 8))
         ws4.cell(r_idx, 4, f"{sid:03d}")
         ws4.cell(r_idx, 5, sec_name)
         for c in range(1, 6):
